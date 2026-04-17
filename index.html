@@ -51,7 +51,18 @@ h1{font-size:clamp(16px,3vw,22px);font-weight:700}
 .worker-wrap::after{
   content:''; position:absolute; top:0; right:0; bottom:0; width:60px;
   background:linear-gradient(to right, transparent, var(--card));
+  pointer-events:none;
 }
+.video-play-btn{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:52px; height:52px; border-radius:50%;
+  background:rgba(0,0,0,.55); border:2px solid rgba(255,255,255,.35);
+  color:#fff; font-size:20px; cursor:pointer;
+  display:none; align-items:center; justify-content:center;
+  transition:background 0.2s, transform 0.15s;
+  z-index:10;
+}
+.video-play-btn:hover{background:rgba(0,0,0,.75); transform:translate(-50%,-50%) scale(1.08)}
 
 /* Bubble + stats area */
 .hero-right{
@@ -178,8 +189,10 @@ button.success{background:#14532d;border-color:var(--accent);color:#86efac;font-
 
       <!-- Worker character -->
       <div class="worker-wrap">
-        <img src="worker.png" class="worker-img" alt="Trabalhador olhando o relógio"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+        <video class="worker-img" id="workerVideo" autoplay muted playsinline>
+          <source src="worker.mp4" type="video/mp4"/>
+        </video>
+        <button class="video-play-btn" id="videoPlayBtn" title="Reproduzir novamente">▶</button>
         <div class="worker-fallback" style="display:none">🧑‍💼</div>
       </div>
 
@@ -361,7 +374,7 @@ function calc(){
 
 // ─── Hero ──────────────────────────────────────────────────────────────────
 const BUBBLE_PHRASES = {
-  idle:    ['A que horas você chegou hoje? 🤔',        '--:--',  ''],
+  idle:    ['Quando você chegou hoje? 🤔',        '--:--',  ''],
   working: ['Segura a ansiedade... faltam',        null,     'para completar 8h'],
   almost:  ['QUASE LÁ! Só mais',                  null,     '⚡ Prepara a bolsa!'],
   done:    ['PODE IR EMBORA!!',                   '🎉',     'Jornada de 8h completa!'],
@@ -568,6 +581,20 @@ if(!loaded) clearAll(); else calc();
 tickClock();
 setInterval(tickClock, 1000);
 setInterval(() => { calc(); }, 60000); // atualiza a cada minuto (período em aberto)
+
+// ─── Video: toca uma vez e para ───────────────────────────────────────────
+const workerVideo = el('workerVideo');
+const videoPlayBtn = el('videoPlayBtn');
+if(workerVideo){
+  workerVideo.addEventListener('ended', () => {
+    videoPlayBtn.style.display = 'flex';
+  });
+  videoPlayBtn.addEventListener('click', () => {
+    videoPlayBtn.style.display = 'none';
+    workerVideo.currentTime = 0;
+    workerVideo.play();
+  });
+}
 </script>
 </body>
 </html>
