@@ -304,6 +304,14 @@ function diff(s,e){ if(s==null||e==null) return 0; let d=e-s; if(d<0) d+=1440; r
 function clockNow(){ const n=new Date(); return n.getHours()*60+n.getMinutes(); }
 function minToClock(m){ m=((m%1440)+1440)%1440; return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); }
 
+// ─── Auto-advance ─────────────────────────────────────────────────────────
+function advanceIfComplete(input){
+  if(input.value.length !== 5) return;
+  const all = $$('#periods input[type=time]');
+  const next = all.slice(all.indexOf(input) + 1).find(i => !i.value);
+  if(next) next.focus();
+}
+
 // ─── Rows ──────────────────────────────────────────────────────────────────
 function addRow(start, end){
   const node = el('rowTmpl').content.firstElementChild.cloneNode(true);
@@ -312,8 +320,8 @@ function addRow(start, end){
   if(start) ins.value = start;
   if(end)   out.value = end;
   node.querySelector('.del').addEventListener('click', ()=>{ node.remove(); calc(); save(); });
-  ins.addEventListener('input', ()=>{ calc(); save(); });
-  out.addEventListener('input', ()=>{ calc(); save(); });
+  ins.addEventListener('input', ()=>{ calc(); save(); advanceIfComplete(ins); });
+  out.addEventListener('input', ()=>{ calc(); save(); advanceIfComplete(out); });
   el('periods').appendChild(node);
   return node;
 }
@@ -374,7 +382,7 @@ function calc(){
 
 // ─── Hero ──────────────────────────────────────────────────────────────────
 const BUBBLE_PHRASES = {
-  idle:    ['A que horas você chegou hoje? 🤔',        '--:--',  ''],
+  idle:    ['Quando você chegou hoje? 🤔',        '--:--',  ''],
   working: ['Segura a ansiedade... faltam',        null,     'para completar 8h'],
   almost:  ['QUASE LÁ! Só mais',                  null,     '⚡ Prepara a bolsa!'],
   done:    ['PODE IR EMBORA!!',                   '🎉',     'Jornada de 8h completa!'],
