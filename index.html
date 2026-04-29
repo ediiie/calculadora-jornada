@@ -550,7 +550,12 @@ function copyResult(){
   const s8    = el('sug8').querySelector('.pt-time').textContent;
   const s9    = el('sug9').querySelector('.pt-time').textContent;
 
-  let text = '⏱️ *Jornada do dia*\n──────────────────\n';
+  const now = new Date();
+  const dateStr = String(now.getDate()).padStart(2,'0') + '/' +
+                  String(now.getMonth()+1).padStart(2,'0') + '/' +
+                  now.getFullYear();
+
+  let text = '⏱️ *Jornada do dia — ' + dateStr + '*\n──────────────────\n';
   lines.forEach(l => text += '• ' + l + '\n');
   text += '──────────────────\n';
   text += '*Total trabalhado:* ' + total + '\n';
